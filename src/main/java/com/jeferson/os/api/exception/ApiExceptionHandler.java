@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.jeferson.os.domain.exception.ApiBusinessException;
+import com.jeferson.os.domain.exception.ApiInvalidArgumentException;
 import com.jeferson.os.domain.exception.ApiModelExistsException;
 import com.jeferson.os.domain.exception.ApiModelNotFoundException;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -108,6 +111,32 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return handleExceptionInternal(ex, problem, headers, status, request);
+    }
+
+    @ExceptionHandler(ApiInvalidArgumentException.class)
+    public ResponseEntity<Object> handleApiInvalidArgument(ApiInvalidArgumentException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ProblemType problemType = ProblemType.INVALID_DATA;
+        String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
+
+        Problem problem = createProblemBuilder(status, problemType, detail)
+                .message(ex.getMessage())
+                .build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Object> handleBadCredential(BadCredentialsException ex, WebRequest request) {
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        ProblemType problemType = ProblemType.BAD_CREDENTIAL;
+        String detail = "Suas credenciais são inválidas.";
+
+        Problem problem = createProblemBuilder(status, problemType, ex.getMessage())
+                .message(detail)
+                .build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
     }
 
     @ExceptionHandler(Exception.class)
@@ -241,11 +270,11 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, problem, headers, status, request);
     }
 
-    /*@ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleEntidadeNaoEncontrada(AccessDeniedException ex, WebRequest request) {
 
         HttpStatus status = HttpStatus.FORBIDDEN;
-        ProblemType problemType = ProblemType.ACESSO_NEGADO;
+        ProblemType problemType = ProblemType.ACCESS_DENIED;
         String detail = ex.getMessage();
 
         Problem problem = createProblemBuilder(status, problemType, detail)
@@ -254,7 +283,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
-    }*/
+    }
 
     @ExceptionHandler(ApiModelNotFoundException.class)
     public ResponseEntity<?> handleEntidadeNaoEncontrada(ApiModelNotFoundException ex, WebRequest request) {

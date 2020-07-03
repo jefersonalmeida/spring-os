@@ -2,7 +2,7 @@ package com.jeferson.os.domain.model;
 
 public enum OrderStatus {
     OPEN("ABERTO"),
-    FINALIZED("FINALIZADO"),
+    FINISHED("FINALIZADO"),
     CANCELED("CANCELADO");
 
     private final String value;

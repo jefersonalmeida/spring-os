@@ -1,9 +1,9 @@
 package com.jeferson.os.api.controller;
 
 import com.jeferson.os.api.model.OrderModel;
-import com.jeferson.os.api.controller.request.OrderRequest;
-import com.jeferson.os.api.controller.response.ResponsePage;
-import com.jeferson.os.api.controller.response.ResponseResult;
+import com.jeferson.os.api.request.OrderRequest;
+import com.jeferson.os.api.response.ResponsePage;
+import com.jeferson.os.api.response.ResponseResult;
 import com.jeferson.os.domain.model.Order;
 import com.jeferson.os.domain.service.OrderService;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -37,10 +36,10 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<ResponsePage<List<OrderModel>>> index(
-            @RequestParam(name = "page", required = false) Optional<Integer> page,
-            @RequestParam(name = "size", required = false) Optional<Integer> size,
-            @RequestParam(name = "order", required = false) Optional<String> order,
-            @RequestParam(name = "sort", required = false) Optional<String> sort
+            @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+            @RequestParam(name = "size", required = false, defaultValue = "") Integer size,
+            @RequestParam(name = "order", required = false, defaultValue = "created_at") String order,
+            @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort
     ) {
         Page<Order> items = orderService.paginate(page, size, order, sort);
         return ResponseEntity.ok().body(toPaginateModel(items));

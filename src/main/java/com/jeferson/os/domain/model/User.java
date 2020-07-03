@@ -2,21 +2,21 @@ package com.jeferson.os.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.jeferson.os.core.util.BCrypt;
 import com.jeferson.os.core.util.Util;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,7 +31,7 @@ import java.util.UUID;
         uniqueConstraints = {@UniqueConstraint(name = "users_unique", columnNames = {"id", "email"})}
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -88,10 +88,6 @@ public class User {
     @JsonProperty(value = "updated_at")
     private OffsetDateTime updatedAt;
 
-    public void generateActivationToken() {
-        this.activationToken = Util.randomString();
-    }
-
     public User(String name, String email, String password, List<Role> roles) {
         super();
         this.setActive(false);
@@ -118,8 +114,46 @@ public class User {
         this.setUpdatedAt(user.getUpdatedAt());
     }
 
-    public void setPassword(String password) {
-        this.password = (password.isEmpty() && this.password == null) ? null : BCrypt.getHash(password);
+    public void generateActivationToken() {
+        this.activationToken = Util.randomString();
     }
 
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password.isEmpty() ? this.password : Util.encoder(password);
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
 }

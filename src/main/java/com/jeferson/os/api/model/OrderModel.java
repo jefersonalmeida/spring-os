@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Getter
@@ -25,9 +25,18 @@ public class OrderModel {
 
     private BigDecimal price;
 
-    @JsonProperty(value = "opened_at")
-    private OffsetDateTime openedAt;
+    @JsonProperty("created_by")
+    private UserSampleModel createdBy;
+
+    @JsonProperty("updated_by")
+    private UserSampleModel updatedBy;
+
+    @JsonProperty("created_at")
+    private Date createdAt;
+
+    @JsonProperty("updated_at")
+    private Date updatedAt;
 
     @JsonProperty(value = "finished_at")
-    private OffsetDateTime finishedAt;
+    private Date finishedAt;
 }

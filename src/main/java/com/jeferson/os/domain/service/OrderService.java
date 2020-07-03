@@ -17,8 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,7 +32,7 @@ public class OrderService {
     @Value("${api.pagination.size}")
     private int paginationSize;
 
-    public Page<Order> paginate(Optional<Integer> page, Optional<Integer> size, Optional<String> order, Optional<String> sort) {
+    public Page<Order> paginate(Integer page, Integer size, String order, String sort) {
         PageRequest pageRequest = getPageRequest(page, size, order, sort);
         return orderRepository.findAll(pageRequest);
     }
@@ -51,8 +49,6 @@ public class OrderService {
 
         order.setUser(user);
         order.setStatus(OrderStatus.OPEN);
-        order.setOpenedAt(OffsetDateTime.now());
-
         return orderRepository.save(order);
     }
 
@@ -72,22 +68,12 @@ public class OrderService {
         return orderCommentRepository.save(comment);
     }
 
-    private PageRequest getPageRequest(Optional<Integer> page, Optional<Integer> size, Optional<String> order, Optional<String> sort) {
+    private PageRequest getPageRequest(Integer page, Integer size, String order, String sort) {
         return PageRequest.of(
-                page.orElse(0),
-                getSize(size),
-                getDirection(sort),
-                Util.toCamelCase(order.orElse("opened_at"))
+                page,
+                size != null ? size : this.paginationSize,
+                sort.toUpperCase().equals("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC,
+                Util.toCamelCase(order != null ? order : "created_at")
         );
-    }
-
-    private Sort.Direction getDirection(Optional<String> sort) {
-        return sort.filter(s -> s.toUpperCase().equals("ASC"))
-                .map(s -> Sort.Direction.ASC)
-                .orElse(Sort.Direction.DESC);
-    }
-
-    private int getSize(Optional<Integer> size) {
-        return size.orElseGet(() -> this.paginationSize);
     }
 }

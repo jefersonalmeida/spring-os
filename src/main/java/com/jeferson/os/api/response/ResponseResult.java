@@ -1,4 +1,4 @@
-package com.jeferson.os.api.controller.response;
+package com.jeferson.os.api.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

@@ -12,7 +12,8 @@ public enum ProblemType {
     INCOMPREHENSIBLE_MESSAGE("incomprehensible-message", "Mensagem incompreensível"),
     RESOURCE_NOT_FOUND("resource-not-found", "Recurso não encontrado"),
     ENTITY_EXIST("entity-exist", "Entidade em uso"),
-    BUSINESS_ERROR("business-error", "Violação de regra de negócio");
+    BUSINESS_ERROR("business-error", "Violação de regra de negócio"),
+    BAD_CREDENTIAL("bad-credencial", "Erro na validação de dados do usuário");
 
     private final String title;
     private final String uri;

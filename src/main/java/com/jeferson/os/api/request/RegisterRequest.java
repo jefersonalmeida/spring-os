@@ -1,17 +1,12 @@
-package com.jeferson.os.api.controller.request;
+package com.jeferson.os.api.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.jeferson.os.domain.model.Role;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter

@@ -14,6 +14,7 @@ import java.util.List;
 public class Problem {
 
     private final Integer status;
+    // @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     private final OffsetDateTime timestamp;
     private final String type;
     private final String title;

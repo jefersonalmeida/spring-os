@@ -1,8 +1,8 @@
 package com.jeferson.os.api.controller;
 
 import com.jeferson.os.api.model.OrderCommentModel;
-import com.jeferson.os.api.controller.request.OrderCommentRequest;
-import com.jeferson.os.api.controller.response.ResponseResult;
+import com.jeferson.os.api.request.OrderCommentRequest;
+import com.jeferson.os.api.response.ResponseResult;
 import com.jeferson.os.domain.model.Order;
 import com.jeferson.os.domain.model.OrderComment;
 import com.jeferson.os.domain.service.OrderService;

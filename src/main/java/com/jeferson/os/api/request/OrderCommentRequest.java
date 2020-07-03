@@ -1,4 +1,4 @@
-package com.jeferson.os.api.controller.request;
+package com.jeferson.os.api.request;
 
 import lombok.Getter;
 import lombok.Setter;

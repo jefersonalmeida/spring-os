@@ -3,13 +3,14 @@ package com.jeferson.os.domain.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jeferson.os.domain.exception.ApiInvalidArgumentException;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Entity
@@ -20,11 +21,9 @@ import java.util.UUID;
         uniqueConstraints = {@UniqueConstraint(name = "orders_unique", columnNames = {"id"})}
 )
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(updatable = false, nullable = false)
-    private UUID id;
+@EntityListeners(AuditingEntityListener.class)
+@EqualsAndHashCode(callSuper = true)
+public class Order extends Auditable {
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL, targetEntity = User.class)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -40,11 +39,8 @@ public class Order {
     @Column(precision = 19, scale = 6, nullable = false)
     private BigDecimal price;
 
-    @Column(name = "opened_at", nullable = false)
-    private OffsetDateTime openedAt;
-
     @Column(name = "finished_at")
-    private OffsetDateTime finishedAt;
+    private Date finishedAt;
 
     @OneToMany(mappedBy = "order")
     private List<OrderComment> comments = new ArrayList<>();
@@ -61,7 +57,7 @@ public class Order {
         if (isNoAllowFinalize()) {
             throw new ApiInvalidArgumentException("Ordem não pode ser finalizada.");
         }
-        setStatus(OrderStatus.FINALIZED);
-        setFinishedAt(OffsetDateTime.now());
+        setStatus(OrderStatus.FINISHED);
+        setFinishedAt(new Date());
     }
 }

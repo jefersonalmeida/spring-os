@@ -1,9 +1,10 @@
 package com.jeferson.os.api.controller;
 
 import com.jeferson.os.api.model.UserModel;
-import com.jeferson.os.api.controller.request.RegisterRequest;
-import com.jeferson.os.api.controller.response.ResponsePage;
-import com.jeferson.os.api.controller.response.ResponseResult;
+import com.jeferson.os.api.request.RegisterRequest;
+import com.jeferson.os.api.response.ResponsePage;
+import com.jeferson.os.api.response.ResponseResult;
+import com.jeferson.os.domain.Const;
 import com.jeferson.os.domain.model.User;
 import com.jeferson.os.domain.service.UserService;
 import com.jeferson.os.domain.validation.UUIDValidator;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,10 +29,10 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<ResponsePage<List<UserModel>>> index(
-            @RequestParam(name = "page", required = false) Optional<Integer> page,
-            @RequestParam(name = "size", required = false) Optional<Integer> size,
-            @RequestParam(name = "order", required = false) Optional<String> order,
-            @RequestParam(name = "sort", required = false) Optional<String> sort
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "") Integer size,
+            @RequestParam(required = false, defaultValue = "created_at") String order,
+            @RequestParam(required = false, defaultValue = "DESC") String sort
     ) {
 
         Page<User> items = userService.paginate(page, size, order, sort);
@@ -49,7 +49,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<ResponseResult<UserModel>> store(@Valid @RequestBody RegisterRequest request) {
-        User user = userService.register(toEntity(request));
+        User user = userService.register(toEntity(request), Const.ROLE_CLIENT);
         ResponseResult<UserModel> responseResult = new ResponseResult<>();
         responseResult.setData(toModel(user));
         return ResponseEntity.status(HttpStatus.CREATED).body(responseResult);

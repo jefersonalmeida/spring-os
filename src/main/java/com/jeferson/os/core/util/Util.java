@@ -2,6 +2,8 @@ package com.jeferson.os.core.util;
 
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.util.Random;
 
 public class Util {
@@ -34,5 +36,12 @@ public class Util {
             );
         }
         return variableName;
+    }
+
+    public static String encoder(String password) {
+        if (password.isEmpty()) return null;
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.encode(password);
     }
 }

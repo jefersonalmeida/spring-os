@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jeferson.os.domain.model.Role;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -34,9 +31,6 @@ public class UserModel {
 
     @Size(max = 20)
     private String phone;
-
-    @Size(max = 200)
-    private String password;
 
     private String img;
 
